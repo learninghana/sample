@@ -1,0 +1,70 @@
+namespace sloc.db;
+
+context model {
+
+    /*@@layout{"layoutInfo":{"x":-401,"y":-196}}*/
+    entity Company {
+        key company_code : String(4);
+            company_name : String(45);
+    }
+
+    /*@@layout{"layoutInfo":{"x":-401,"y":-103}}*/
+    entity Store {
+        key company_code : association[*, 1..1] to Company { company_code };
+        key store_id     : String(10);
+            store_name   : String(35);
+    }
+
+    type datatype{
+    	
+    } 
+    /*@@layout{"layoutInfo":{"x":-105,"y":-150}}*/
+    entity StoreAddress {
+        key id           : Integer generated always as identity(start with 1000000 increment by 1 minvalue 1000000 maxvalue 9999999);
+            company      : association[*, 1..1] to Company { company_code };
+            store        : association[*, 1..1] to Store { store_id };
+            street_id    : association[*, 1..1] to StreetAddress { id };
+            suburb       : association[*, 1..1] to Suburb { suburb };
+            postcode     : association[*, 1..1] to Postcode { postcode };
+            state        : association[*, 1..1] to State { state };
+            addr_remarks : String(125);
+            logitude     : String(35);
+            latitude     : String(35);
+    };
+
+    /*@@layout{"layoutInfo":{"x":-401,"y":17}}*/
+    entity StreetAddress {
+        key id        : Integer generated always as identity(start with 100000 increment by 1 minvalue 100000 no maxvalue);
+            level     : String(20);
+            building  : String(15);
+            street_no : String(30);
+            street    : String(100);
+    };
+
+    /*@@layout{"layoutInfo":{"x":229,"y":-89.5}}*/
+    entity Postcode {
+        key postcode : String(4) not null;
+            state    : association[*, 1..1] to State { state };
+    };
+
+    /*@@layout{"layoutInfo":{"x":192,"y":-240.5}}*/
+    entity Suburb {
+        key suburb   : String(50) not null;
+        key postcode : association[*, 1..1] to Postcode { postcode };
+    };
+
+    /*@@layout{"layoutInfo":{"x":199,"y":33.5}}*/
+    entity State {
+        key state      : String(3) not null;
+            state_name : String(30);
+    };
+
+    entity LocRepo {
+        key id        : Integer generated always as identity(start with 10000 increment by 1 minvalue 10000 no maxvalue);
+            postcode  : String(4)  not null;
+            locality  : String(50) not null;
+            state     : String(3)  not null;
+            longitude : String(35) not null;
+            latitude  : String(35) not null;
+    };
+};

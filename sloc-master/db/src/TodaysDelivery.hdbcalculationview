@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Calculation:scenario xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" id="JP.db::TodaysDelivery" applyPrivilegeType="NONE" dataCategory="DIMENSION" dimensionType="STANDARD" schemaVersion="3.0" outputViewType="Projection" cacheInvalidationPeriod="NONE" enforceSqlExecution="false">
+<descriptions defaultDescription="TodaysDelivery"/>
+<localVariables>
+  <variable id="ip_lat" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="NVARCHAR" length="35" mandatory="true">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable>
+  <variable id="ip_long" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="NVARCHAR" length="35" mandatory="true">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable>
+</localVariables>
+<variableMappings/>
+<dataSources>
+  <DataSource id="JP.db::model.Delivery">
+    <resourceUri>JP.db::model.Delivery</resourceUri>
+  </DataSource>
+</dataSources>
+<calculationViews/>
+<logicalModel id="JP.db::model.Delivery" filterExpressionLanguage="SQL">
+  <attributes>
+    <attribute id="OrderNo" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="OrderNo"/>
+      <keyMapping columnObjectName="model.Delivery" columnName="OrderNo"/>
+    </attribute>
+    <attribute id="DeliveryAddress" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DeliveryAddress"/>
+      <keyMapping columnObjectName="model.Delivery" columnName="DeliveryAddress"/>
+    </attribute>
+    <attribute id="HighRisk" order="3" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="HighRisk"/>
+      <keyMapping columnObjectName="model.Delivery" columnName="HighRisk"/>
+    </attribute>
+    <attribute id="DelvStatus" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DelvStatus"/>
+      <keyMapping columnObjectName="model.Delivery" columnName="DelvStatus"/>
+    </attribute>
+    <attribute id="DateofDelivery" order="5" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DateofDelivery"/>
+      <keyMapping columnObjectName="model.Delivery" columnName="DateofDelivery"/>
+    </attribute>
+    <attribute id="lat_del_adr" order="6" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="lat_del_adr"/>
+      <keyMapping columnObjectName="model.Delivery" columnName="lat_del_adr"/>
+    </attribute>
+    <attribute id="long_del_adr" order="7" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="long_del_adr"/>
+      <keyMapping columnObjectName="model.Delivery" columnName="long_del_adr"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes>
+    <calculatedAttribute id="Delv_coordinates" order="8" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      <keyCalculation datatype="ST_GEOMETRY" expressionLanguage="COLUMN_ENGINE">
+        <formula>ST_GeomFromText('Point(' + &quot;long_del_adr&quot; + ' ' + &quot;lat_del_adr&quot; + ')',4326)</formula>
+      </keyCalculation>
+      </calculatedAttribute>
+    <calculatedAttribute id="in_lat" order="9" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      <keyCalculation datatype="NVARCHAR" expressionLanguage="COLUMN_ENGINE" length="35">
+        <formula>'$$ip_lat$$'</formula>
+      </keyCalculation>
+      </calculatedAttribute>
+    <calculatedAttribute id="in_long" order="10" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      <keyCalculation datatype="NVARCHAR" expressionLanguage="COLUMN_ENGINE" length="35">
+        <formula>'$$ip_long$$'</formula>
+      </keyCalculation>
+      </calculatedAttribute>
+    <calculatedAttribute id="Origin_coordinates" order="11" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      <keyCalculation datatype="ST_GEOMETRY" expressionLanguage="COLUMN_ENGINE">
+        <formula>ST_GeomFromText('Point(' + &quot;in_long&quot; + ' ' + &quot;in_lat&quot; + ')',4326)​</formula>
+      </keyCalculation>
+      </calculatedAttribute>
+  </calculatedAttributes>
+  <baseMeasures/>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+
+  <filter>TO_DATE(&quot;DateofDelivery&quot;,'DD/MM/YYYY')=CURRENT_DATE</filter>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="40" y="85"/>
+    </shape>
+  </shapes>
+</layout>
+</Calculation:scenario>

@@ -1,0 +1,74 @@
+PROCEDURE "sloc.db::fetchStore" ( 
+	in	im_company_code		nvarchar(4),
+	in	im_store_id			nvarchar(10),
+	in	im_store_name		nvarchar(35),
+	in	im_create			boolean,
+	out	ex_company_code		nvarchar(4),
+	out ex_store_id			nvarchar(10),
+	out ex_store_name		nvarchar(35),
+	out ex_error			nvarchar(100)
+)
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER AS
+   --DEFAULT SCHEMA <default_schema_name>
+   --READS SQL DATA AS
+BEGIN
+   /*************************************
+       Write your procedure logic 
+   *************************************/
+	declare v_count integer;
+	declare v_company_code varchar(4);
+	declare v_store_id varchar(10);
+	
+	v_company_code = upper(im_company_code);
+	v_store_id = upper(im_store_id);
+   
+	select count(*) 
+	into v_count 
+	from "sloc.db::model.Company"
+	where "company_code" = v_company_code;
+	if v_count > 0 then
+		
+		select count(*) 
+		into v_count 
+		from "sloc.db::model.Store"
+		where	"company_code.company_code" = v_company_code and
+				"store_id" = v_store_id;
+		if v_count > 0 then
+			
+			select "company_code.company_code", "store_id", "store_name" 
+			into ex_company_code, ex_store_id, ex_store_name
+			from "sloc.db::model.Store"
+			where	"company_code.company_code" = v_company_code and
+					"store_id" = v_store_id;
+			
+		else
+			
+			if im_create = true then
+			
+				insert into "sloc.db::model.Store" values(v_company_code, v_store_id, im_store_name);
+				select count(*) 
+				into v_count 
+				from "sloc.db::model.Store"
+				where	"company_code.company_code" = v_company_code and
+						"store_id" = v_store_id;
+				if v_count > 0 then
+					
+					select "company_code.company_code", "store_id", "store_name" 
+					into ex_company_code, ex_store_id, ex_store_name
+					from "sloc.db::model.Store"
+					where	"company_code.company_code" = v_company_code and
+							"store_id" = v_store_id;
+						  
+				else
+					ex_error = 'error inserting store ' || v_store_id || ' for company code ' || v_company_code;
+				end if;
+			else
+				ex_error = 'store ' || v_store_id || ' not found for company code ' || v_company_code;
+			end if;
+		end if;
+	else
+		ex_error = 'invalid company code ' || v_company_code;
+	end if;
+	
+END

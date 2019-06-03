@@ -1,0 +1,20 @@
+<mvc:View xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout" controllerName="slocui.controller.Main" displayBlock="true">
+	<App>
+		<pages>
+			<Page title="{i18n>title}" id="mainPage" enableScrolling="false">
+				<content>
+					<l:VerticalLayout id="vlay1" class="sapUiResponsiveContentPadding" width="100%">
+						<SearchField id="searchField" showMagnifier="true" width="100%" placeholder="Search for Suburb" enableSuggestions="true" search="onSearch"
+							suggest="onSuggest" suggestionItems="{ path: '/LocRepo', sorter: { path: 'locality' } }">
+							<suggestionItems>
+								<SuggestionItem text="{locality} {postcode} {state}" key="{id}"/>
+							</suggestionItems>
+						</SearchField>
+						<html:div id="gmaps1"></html:div>
+					</l:VerticalLayout>
+				</content>
+			</Page>
+		</pages>
+	</App>
+</mvc:View>
